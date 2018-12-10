@@ -38,7 +38,7 @@ function init() {
   scene.background = new THREE.Color( 0x242a34 );
 
 
-  params = {exposure: 1,bloomStrength: 0,bloomThreshold: .75,bloomRadius: 0};
+  params = {exposure: 1,bloomStrength: 3,bloomThreshold: .75,bloomRadius: 1};
   bloomPass = new THREE.UnrealBloomPass( (window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.15 );
   bloomPass.renderToScreen = true;
   bloomPass.threshold = params.bloomThreshold;
@@ -306,18 +306,18 @@ function refractionCreation(){
 
 function createParticleSystem(){
   //This will add a particle system to the scene
-  var starsGeometry = new THREE.Geometry();
+  var bloodGeometry = new THREE.Geometry();
 
   for ( var i = 0; i < 1000; i ++ ) {
-    var star = new THREE.Vector3();
-    star.x = THREE.Math.randFloat(-400,400) * Math.sin(i);
-    star.y = THREE.Math.randFloat(-1000,0) * Math.sin(THREE.Math.randFloat(0,-1))-400;
-    star.z = THREE.Math.randFloat(-600,400)* Math.sin(THREE.Math.randFloat(0,-1));
-    starsGeometry.vertices.push( star );
+    var bloodDrop = new THREE.Vector3();
+    bloodDrop.x = THREE.Math.randFloat(-400,400) * Math.sin(i);
+    bloodDrop.y = THREE.Math.randFloat(-1000,0) * Math.sin(THREE.Math.randFloat(0,-1))-400;
+    bloodDrop.z = THREE.Math.randFloat(-600,400)* Math.sin(THREE.Math.randFloat(0,-1));
+    bloodGeometry.vertices.push( bloodDrop );
   }
-  var starsMaterial = new THREE.PointsMaterial( { color: 0xFF0000 } );
-  var starField = new THREE.Points( starsGeometry, starsMaterial );
-  scene.add( starField );
+  var bloodMaterial = new THREE.PointsMaterial( { color: 0xFF0000 } );
+  var bloodField = new THREE.Points( bloodGeometry, bloodMaterial );
+  scene.add( bloodField );
 
 }
 
