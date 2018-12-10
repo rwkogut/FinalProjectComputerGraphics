@@ -5,6 +5,7 @@
 * Sources:
 * https://github.com/mrdoob/three.js/blob/master/examples/webgl_postprocessing_unreal_bloom.html
 * https://github.com/mrdoob/three.js/blob/master/examples/webgl_refraction.html
+* https://github.com/mrdoob/three.js/blob/master/examples/webgl_materials_bumpmap_skin.html
 **/
 
 
@@ -21,6 +22,8 @@ var particleSystem, spawnerOptions, options;
 var tick = 0;
 var clock = new THREE.Clock();
 var gui;
+var windowPane;
+var numParticleSystems =0;
 
 init();
 animate();
@@ -145,24 +148,38 @@ function createScene( geometry, scale ) {
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   scene.add( mesh );
-  //creating the window pane Group
-  var windowPane = new THREE.Group();
 
+  //creating the window pane Group
+  windowPane = new THREE.Group();
+  windowsCreation();
+  woodCreation();
+  scene.add(windowPane);
+  eyeCreation();
+  refractionCreation();
+  createParticleSystem();
+}
+
+function windowsCreation(){
   //creating the windows
   var windowGeometry = new THREE.PlaneGeometry(800,800,800);
   var windowMaterial = new THREE.MeshBasicMaterial({color: 0x6083c2, side: THREE.DoubleSide});
-  windowMaterial.transparent = true;
-  windowMaterial.opacity = 0.4;
-  var windowTransparent = new THREE.Mesh(windowGeometry, windowMaterial);
+  windowMaterial.transparent = true;//allows the window to be see through
+  windowMaterial.opacity = 0.4; //controls the level of transparency
+  var windowTransparent = new THREE.Mesh(windowGeometry, windowMaterial); //front wondow
   var windowGeometryBack = new THREE.PlaneGeometry(830,830,830);
-  var windowTransparentBack = new THREE.Mesh(windowGeometryBack, windowMaterial);
+  var windowTransparentBack = new THREE.Mesh(windowGeometryBack, windowMaterial); //beck window
+
+  //setting the position of the windows
   windowTransparentBack.position.set(0,0,-350);
   windowTransparent.position.set(0,0,500);
+
+  //adding the windows
   windowPane.add(windowTransparent);
   windowPane.add(windowTransparentBack);
+}
 
-  //creating the wood surrounding the windowPane
 
+function woodCreation(){
   //wood texture constant used for all window creation
   var woodTexture = new THREE.TextureLoader().load("threejs/crate.gif");
   var woodMaterial = new THREE.MeshBasicMaterial({map: woodTexture});
@@ -215,7 +232,9 @@ function createScene( geometry, scale ) {
   var windowWoodBottomEdge = new THREE.Mesh(windowBottomEdge, woodMaterial);
   windowWoodBottomEdge.position.set(0,-400,500);
   windowPane.add(windowWoodBottomEdge);
+}
 
+function eyeCreation(){
   //creating the eye groups
   var leftEye = new THREE.Group();
   var rightEye = new THREE.Group();
@@ -268,14 +287,8 @@ function createScene( geometry, scale ) {
 
   //adding the groups to the scene
   scene.add(eyes);
-  scene.add(windowPane);
 
-
-  refractionCreation();
-
-  createParticleSystem();
 }
-
 function refractionCreation(){
   //refractor for the front window
   var refractorGeometry = new THREE.PlaneBufferGeometry( 800, 800 );
@@ -292,7 +305,7 @@ function refractionCreation(){
 }
 
 function createParticleSystem(){
-  //This will add a starfield to the background of a scene
+  //This will add a particle system to the scene
   var starsGeometry = new THREE.Geometry();
 
   for ( var i = 0; i < 1000; i ++ ) {
@@ -314,8 +327,9 @@ function animate() {
   var delta = clock.getDelta();
   tick += delta;
   if ( tick < 0 ) tick = 0;
-  if ( delta > 0 ) {
+  if ( delta > 0 && numParticleSystems < 3000) {
     createParticleSystem();
+    numParticleSystems++;
   }
 
   composerBeckmann.render();
